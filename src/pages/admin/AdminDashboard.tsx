@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Users, Music, Bell, ChevronRight, 
-  Disc, Calendar, TrendingUp, DollarSign
+  Users, Music, Bell, ChevronRight, AlertCircle, 
+  Disc, Calendar, BarChart2, TrendingUp, DollarSign
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { format } from 'date-fns';
 import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, 
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell 
 } from 'recharts';
 
@@ -297,7 +297,7 @@ const AdminDashboard = () => {
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   labelLine={false}
                 >
-                  {genreData.map((_, index) => (
+                  {genreData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

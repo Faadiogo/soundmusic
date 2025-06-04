@@ -1,7 +1,6 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Plus, Pencil, Trash2, Search, Music, Instagram, Youtube, ExternalLink, AlertCircle } from 'lucide-react';
+import { Users, Plus, Pencil, Trash2, Search, Music, Instagram, Youtube, AlignJustify as Spotify, ExternalLink, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { FaSpotify, FaTiktok } from "react-icons/fa";
 

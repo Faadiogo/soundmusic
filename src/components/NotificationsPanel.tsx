@@ -1,7 +1,7 @@
-
+import React from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Check, Music, Trophy, Info } from 'lucide-react';
+import { Bell, Check, Music, Trophy, Info } from 'lucide-react';
 import { useNotifications } from '../hooks/useNotifications';
 
 const NotificationsPanel = () => {

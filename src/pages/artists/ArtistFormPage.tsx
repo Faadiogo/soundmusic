@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Users, ArrowLeft, Save, Trash2, Instagram, Youtube, AlertCircle } from 'lucide-react';
+import { Users, ArrowLeft, Save, Trash2, Instagram, Youtube, AlignJustify as Spotify, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import InputMask from 'react-input-mask';
@@ -224,12 +224,15 @@ const ArtistFormPage = () => {
                         pattern: /^\d{3}\.\d{3}\.\d{3}-\d{2}$/
                       })}
                     >
-                      <input
-                        id="cpf"
-                        type="text"
-                        className={`input ${errors.cpf ? 'border-error-500 focus:ring-error-500 focus:border-error-500' : ''}`}
-                        placeholder="CPF"
-                      />
+                      {(inputProps: any) => (
+                        <input
+                          {...inputProps}
+                          id="cpf"
+                          type="text"
+                          className={`input ${errors.cpf ? 'border-error-500 focus:ring-error-500 focus:border-error-500' : ''}`}
+                          placeholder="CPF"
+                        />
+                      )}
                     </InputMask>
                     {errors.cpf?.type === 'required' && <p className="mt-1 text-sm text-error-600">CPF é um campo obrigatório</p>}                    
                   </div>

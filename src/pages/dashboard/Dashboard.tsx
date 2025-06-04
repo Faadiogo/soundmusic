@@ -1,13 +1,13 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Music, Users, TrendingUp, DollarSign, 
-  Plus
+  Music, Users, Disc, TrendingUp, Calendar, DollarSign, 
+  Plus, BarChart2, ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { format } from 'date-fns';
 import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, 
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell 
 } from 'recharts';
 
@@ -65,6 +65,12 @@ const Dashboard = () => {
     { month: 'Abr', streams: 28000 },
     { month: 'Mai', streams: 32000 },
     { month: 'Jun', streams: 25000 },
+  ];
+
+  const upcomingReleases = [
+    { id: '1', title: 'Rabetão de Terromoto', releaseDate: '2025-07-15' },
+    { id: '2', title: 'Deixa eu mandar meu passinho', releaseDate: '2025-08-01' },
+    { id: '3', title: 'Cada vez mais gostosa', releaseDate: '2025-08-23' },
   ];
 
   const COLORS = ['#5D3FD3', '#FF007F', '#20B2AA', '#FFA500', '#6C757D'];
@@ -244,7 +250,7 @@ const Dashboard = () => {
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   labelLine={false}
                 >
-                  {songRevenueData.map((_, index) => (
+                  {songRevenueData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -283,8 +289,8 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Gráfico de Linha: OUVINTES Mensal */}
-        <div className="card p-5">
+                {/* Gráfico de Linha: OUVINTES Mensal */}
+                <div className="card p-5">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Ouvintes Mensais</h3>
             <select className="text-sm border border-gray-300 rounded-md px-2 py-1">
@@ -326,11 +332,20 @@ const Dashboard = () => {
 
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={sortedArtists} margin={{ top: 5, right: 5, left: 22, bottom: 5 }}>
+              <BarChart
+                data={sortedArtists}
+                layout="vertical"
+                margin={{ top: 5, right: 5, left: 22, bottom: 5 }}
+              >
                 <XAxis type="number" />
                 <YAxis dataKey="name" type="category" />
                 <Tooltip formatter={(value) => [`${value}`, 'Ouvintes']} />
-              </LineChart>
+                <Bar 
+                  dataKey="listeners" 
+                  fill="#fbbf24" 
+                  radius={[0, 4, 4, 0]} // cantos arredondados à direita
+                />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -340,3 +355,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+            
