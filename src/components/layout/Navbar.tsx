@@ -49,8 +49,8 @@ const Navbar: React.FC = () => {
                     to={link.path}
                     className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive(link.path)
-                        ? 'bg-amber-800 text-white'
-                        : 'text-white hover:bg-amber-800 hover:text-white'
+                        ? 'bg-gray-400 bg-opacity-85 text-white'
+                        : 'text-white hover:bg-gray-400 hover:text-white'
                     }`}
                   >
                     {link.icon}
