@@ -1,5 +1,7 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { MockDataProvider } from './contexts/MockDataContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AdminRoute } from './components/AdminRoute';
 
@@ -20,33 +22,35 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          
-          {/* Protected routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/artists" element={<ArtistsPage />} />
-            <Route path="/artists/new" element={<ArtistFormPage />} />
-            <Route path="/artists/:id" element={<ArtistFormPage />} />
-            <Route path="/songs" element={<SongsPage />} />
-            <Route path="/songs/new" element={<SongFormPage />} />
-            <Route path="/songs/:id" element={<SongFormPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-          </Route>
-          
-          {/* Admin routes */}
-          <Route element={<AdminRoute />}>
-            <Route path="/admin" element={<AdminDashboard />} />
-          </Route>
-          
-          {/* Fallback routes */}
-          <Route path="/404" element={<NotFoundPage />} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </Routes>
+        <MockDataProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            
+            {/* Protected routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/artists" element={<ArtistsPage />} />
+              <Route path="/artists/new" element={<ArtistFormPage />} />
+              <Route path="/artists/:id" element={<ArtistFormPage />} />
+              <Route path="/songs" element={<SongsPage />} />
+              <Route path="/songs/new" element={<SongFormPage />} />
+              <Route path="/songs/:id" element={<SongFormPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+            </Route>
+            
+            {/* Admin routes */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
+            
+            {/* Fallback routes */}
+            <Route path="/404" element={<NotFoundPage />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </MockDataProvider>
       </AuthProvider>
     </BrowserRouter>
   );

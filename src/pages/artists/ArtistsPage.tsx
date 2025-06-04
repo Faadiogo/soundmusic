@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Plus, Pencil, Trash2, Search, Music, Instagram, Youtube, ExternalLink, AlertCircle, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useMockData } from '../../contexts/MockDataContext';
 import { FaSpotify, FaTiktok } from "react-icons/fa";
 import { spotifyService } from '../../services/spotifyService';
 import SpotifyConfig from '../../components/SpotifyConfig';
@@ -22,6 +23,7 @@ interface Artist {
 
 const ArtistsPage = () => {
   const { supabase } = useAuth();
+  const { useMockData: shouldUseMockData } = useMockData();
   const [artists, setArtists] = useState<Artist[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,9 +34,118 @@ const ArtistsPage = () => {
   const [loadingImages, setLoadingImages] = useState<{[key: string]: boolean}>({});
   const [showSpotifyConfig, setShowSpotifyConfig] = useState(!spotifyService.hasCredentials());
 
+  // Mock data
+  const mockArtists: Artist[] = [
+    {
+      id: '1',
+      name: 'Beltrano de Souza',
+      artisticName: 'MC Pogba',
+      soundOnEmail: 'pogba@soundon.com',
+      onerpmEmail: 'pogba@onerpm.com',
+      spotifyLink: 'https://spotify.com/artist/mcpogba',
+      youtubeLink: 'https://youtube.com/mcpogba',
+      tiktokLink: 'https://tiktok.com/@mcpogba',
+      instagramLink: 'https://instagram.com/mcpogba'
+    },
+    {
+      id: '2',
+      name: 'Fulano de Tal',
+      artisticName: 'MC D\'Lara',
+      soundOnEmail: 'dlara@soundon.com',
+      onerpmEmail: 'dlara@onerpm.com',
+      spotifyLink: 'https://spotify.com/artist/mcdlara',
+      youtubeLink: 'https://youtube.com/mcdlara',
+      tiktokLink: 'https://tiktok.com/@mcdlara',
+      instagramLink: 'https://instagram.com/mcdlara'
+    },
+    {
+      id: '3',
+      name: 'Ciclano de Tal',
+      artisticName: 'DJ Tchouzen',
+      soundOnEmail: 'tchouzen@soundon.com',
+      onerpmEmail: null,
+      spotifyLink: 'https://spotify.com/artist/djtchouzen',
+      youtubeLink: 'https://youtube.com/djtchouzen',
+      tiktokLink: null,
+      instagramLink: 'https://instagram.com/djtchouzen'
+    },
+    {
+      id: '4',
+      name: 'Beltrano de Tal',
+      artisticName: 'DJ Vitinho',
+      soundOnEmail: 'vitinho@soundon.com',
+      onerpmEmail: 'vitinho@onerpm.com',
+      spotifyLink: 'https://spotify.com/artist/djvitinho',
+      youtubeLink: null,
+      tiktokLink: 'https://tiktok.com/@djvitinho',
+      instagramLink: 'https://instagram.com/djvitinho'
+    },
+    {
+      id: '5',
+      name: 'Rodrigo Martins',
+      artisticName: 'DJ RM',
+      soundOnEmail: 'rm@soundon.com',
+      onerpmEmail: 'rm@onerpm.com',
+      spotifyLink: 'https://spotify.com/artist/djrm',
+      youtubeLink: 'https://youtube.com/djrm',
+      tiktokLink: null,
+      instagramLink: 'https://instagram.com/djrm'
+    },
+    {
+      id: '6',
+      name: 'Leonardo Silva',
+      artisticName: 'DJ Leo Beat',
+      soundOnEmail: null,
+      onerpmEmail: 'leobeat@onerpm.com',
+      spotifyLink: 'https://spotify.com/artist/djleobeat',
+      youtubeLink: 'https://youtube.com/djleobeat',
+      tiktokLink: 'https://tiktok.com/@djleobeat',
+      instagramLink: 'https://instagram.com/djleobeat'
+    },
+    {
+      id: '7',
+      name: 'Diego Costa',
+      artisticName: 'DJ Diego DC',
+      soundOnEmail: 'diegodc@soundon.com',
+      onerpmEmail: null,
+      spotifyLink: 'https://spotify.com/artist/djdiegodc',
+      youtubeLink: null,
+      tiktokLink: 'https://tiktok.com/@djdiegodc',
+      instagramLink: 'https://instagram.com/djdiegodc'
+    },
+    {
+      id: '8',
+      name: 'Bruno Henrique',
+      artisticName: 'MC Beiço MR',
+      soundOnEmail: 'beicomr@soundon.com',
+      onerpmEmail: 'beicomr@onerpm.com',
+      spotifyLink: 'https://spotify.com/artist/mcbeicomr',
+      youtubeLink: 'https://youtube.com/mcbeicomr',
+      tiktokLink: 'https://tiktok.com/@mcbeicomr',
+      instagramLink: 'https://instagram.com/mcbeicomr'
+    }
+  ];
+
+  const mockSongCounts = {
+    '1': 10, 
+    '2': 7,
+    '3': 6,
+    '4': 8,
+    '5': 4,
+    '6': 5,
+    '7': 3,
+    '8': 9    
+  };
+
   useEffect(() => {
-    fetchArtists();
-  }, []);
+    if (shouldUseMockData) {
+      setArtists(mockArtists);
+      setSongsCount(mockSongCounts);
+      setLoading(false);
+    } else {
+      fetchArtists();
+    }
+  }, [shouldUseMockData]);
 
   const fetchArtists = async () => {
     try {
@@ -163,109 +274,7 @@ const ArtistsPage = () => {
     artist.artisticName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Mock data for development
-  const mockArtists: Artist[] = [
-    {
-      id: '1',
-      name: 'Beltrano de Souza',
-      artisticName: 'MC Pogba',
-      soundOnEmail: 'pogba@soundon.com',
-      onerpmEmail: 'pogba@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/mcpogba',
-      youtubeLink: 'https://youtube.com/mcpogba',
-      tiktokLink: 'https://tiktok.com/@mcpogba',
-      instagramLink: 'https://instagram.com/mcpogba'
-    },
-    {
-      id: '2',
-      name: 'Fulano de Tal',
-      artisticName: 'MC D\'Lara',
-      soundOnEmail: 'dlara@soundon.com',
-      onerpmEmail: 'dlara@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/mcdlara',
-      youtubeLink: 'https://youtube.com/mcdlara',
-      tiktokLink: 'https://tiktok.com/@mcdlara',
-      instagramLink: 'https://instagram.com/mcdlara'
-    },
-    {
-      id: '3',
-      name: 'Ciclano de Tal',
-      artisticName: 'DJ Tchouzen',
-      soundOnEmail: 'tchouzen@soundon.com',
-      onerpmEmail: null,
-      spotifyLink: 'https://spotify.com/artist/djtchouzen',
-      youtubeLink: 'https://youtube.com/djtchouzen',
-      tiktokLink: null,
-      instagramLink: 'https://instagram.com/djtchouzen'
-    },
-    {
-      id: '4',
-      name: 'Beltrano de Tal',
-      artisticName: 'DJ Vitinho',
-      soundOnEmail: 'vitinho@soundon.com',
-      onerpmEmail: 'vitinho@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/djvitinho',
-      youtubeLink: null,
-      tiktokLink: 'https://tiktok.com/@djvitinho',
-      instagramLink: 'https://instagram.com/djvitinho'
-    },
-    {
-      id: '5',
-      name: 'Rodrigo Martins',
-      artisticName: 'DJ RM',
-      soundOnEmail: 'rm@soundon.com',
-      onerpmEmail: 'rm@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/djrm',
-      youtubeLink: 'https://youtube.com/djrm',
-      tiktokLink: null,
-      instagramLink: 'https://instagram.com/djrm'
-    },
-    {
-      id: '6',
-      name: 'Leonardo Silva',
-      artisticName: 'DJ Leo Beat',
-      soundOnEmail: null,
-      onerpmEmail: 'leobeat@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/djleobeat',
-      youtubeLink: 'https://youtube.com/djleobeat',
-      tiktokLink: 'https://tiktok.com/@djleobeat',
-      instagramLink: 'https://instagram.com/djleobeat'
-    },
-    {
-      id: '7',
-      name: 'Diego Costa',
-      artisticName: 'DJ Diego DC',
-      soundOnEmail: 'diegodc@soundon.com',
-      onerpmEmail: null,
-      spotifyLink: 'https://spotify.com/artist/djdiegodc',
-      youtubeLink: null,
-      tiktokLink: 'https://tiktok.com/@djdiegodc',
-      instagramLink: 'https://instagram.com/djdiegodc'
-    },
-    {
-      id: '8',
-      name: 'Bruno Henrique',
-      artisticName: 'MC Beiço MR',
-      soundOnEmail: 'beicomr@soundon.com',
-      onerpmEmail: 'beicomr@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/mcbeicomr',
-      youtubeLink: 'https://youtube.com/mcbeicomr',
-      tiktokLink: 'https://tiktok.com/@mcbeicomr',
-      instagramLink: 'https://instagram.com/mcbeicomr'
-    }
-  ];
-
-  const displayArtists = loading || artists.length === 0 ? mockArtists : filteredArtists;
-  const mockSongCounts = {
-    '1': 10, 
-    '2': 7,
-    '3': 6,
-    '4': 8,
-    '5': 4,
-    '6': 5,
-    '7': 3,
-    '8': 9    
-  };
+  const displayArtists = filteredArtists;
   
   return (
     <div className="page-container">
@@ -283,8 +292,8 @@ const ArtistsPage = () => {
         </Link>
       </div>
 
-      {/* Spotify Configuration */}
-      {showSpotifyConfig && (
+      {/* Spotify Configuration - only show when not using mock data */}
+      {showSpotifyConfig && !shouldUseMockData && (
         <div className="mb-6">
           <SpotifyConfig onConfigured={handleSpotifyConfigured} />
         </div>
@@ -361,12 +370,12 @@ const ArtistsPage = () => {
               <div className="flex items-center text-gray-600 mt-4">
                 <Music className="h-4 w-4 mr-1" />
                 <span className="text-sm">
-                  Participação em {songsCount[artist.id] !== undefined ? songsCount[artist.id] : mockSongCounts[artist.id as keyof typeof mockSongCounts] || 0} músicas
+                  Participação em {songsCount[artist.id] || 0} músicas
                 </span>
               </div>
 
-              {/* Load Spotify image button */}
-              {!artist.spotifyImage && !loadingImages[artist.id] && spotifyService.hasCredentials() && (
+              {/* Load Spotify image button - only show when not using mock data */}
+              {!artist.spotifyImage && !loadingImages[artist.id] && spotifyService.hasCredentials() && !shouldUseMockData && (
                 <button
                   onClick={() => refreshArtistImage(artist)}
                   className="mt-3 text-sm text-primary-600 hover:text-primary-700 flex items-center"
@@ -443,6 +452,7 @@ const ArtistsPage = () => {
         ))}
       </div>
 
+      {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
