@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { User, Save, Mail, Key, AlertCircle } from 'lucide-react';
@@ -342,7 +343,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900">
-                    {profile.fullName || user.email || 'User'}
+                    {profile.fullName || user?.email || 'User'}
                   </h3>
                 </div>
               </div>

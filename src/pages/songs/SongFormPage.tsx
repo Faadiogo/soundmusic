@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Music, ArrowLeft, Save, Trash2, Plus, X, Clock, 
@@ -61,7 +62,7 @@ const SongFormPage = () => {
   });
   const [totalRoyalty, setTotalRoyalty] = useState(0);
   
-  const { register, handleSubmit, setValue, control, watch, formState: { errors } } = useForm<SongForm>({
+  const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<SongForm>({
     defaultValues: {
       distributorroyalty: 40,
     }
@@ -421,15 +422,15 @@ const SongFormPage = () => {
                 </div>
                 
                 <div className="form-group mt-4">
-                  <label htmlFor="audiofile" className="label">Arquivo de Áudio (.WAV)</label>
+                  <label htmlFor="audiourl" className="label">URL do Áudio</label>
                   <input
-                    id="audiofile"
-                    type="file"
-                    accept=".wav,audio/wav"
+                    id="audiourl"
+                    type="url"
                     className="input"
-                    {...register('audiofile')}
+                    placeholder="https://exemplo.com/audio.mp3"
+                    {...register('audiourl')}
                   />
-                  <p className="mt-1 text-sm text-gray-500">Faça upload do seu arquivo de áudio (formato WAV)</p>
+                  <p className="mt-1 text-sm text-gray-500">Cole o link do seu arquivo de áudio</p>
                 </div>
 
                 
