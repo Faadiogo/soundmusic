@@ -1,8 +1,8 @@
 import React, { ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Music, Users, Home, User, LogOut, Menu, X, Bell,
-  ChevronDown, BarChart2, Settings, FileText, MessageSquare
+  Music, Users, Home, Menu, X, Bell,
+  ChevronDown, BarChart2, Settings, FileText
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -11,7 +11,7 @@ type AdminLayoutProps = {
 };
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-  const { user, signOut } = useAuth();
+  const { signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
