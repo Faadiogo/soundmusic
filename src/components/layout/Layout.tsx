@@ -13,15 +13,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigate('/login');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
