@@ -1,7 +1,5 @@
 
 import React, { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
@@ -10,9 +8,6 @@ type LayoutProps = {
 };
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { signOut } = useAuth();
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
