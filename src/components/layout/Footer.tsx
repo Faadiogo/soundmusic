@@ -1,6 +1,8 @@
+
 import React from 'react';
-import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
+import { Facebook, Instagram } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
@@ -38,10 +40,10 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-medium mb-4">Suporte</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-white hover:text-white transition-colors">FAQ</a></li>
-              <li><a href="#" className="text-white hover:text-white transition-colors">Ajuda</a></li>
-              <li><a href="#" className="text-white hover:text-white transition-colors">Termos de Serviço</a></li>
-              <li><a href="#" className="text-white hover:text-white transition-colors">Privacidade</a></li>
+              <li><Link to="/faq" className="text-white hover:text-white transition-colors">FAQ</Link></li>
+              <li><Link to="/ajuda" className="text-white hover:text-white transition-colors">Ajuda</Link></li>
+              <li><Link to="/termos" className="text-white hover:text-white transition-colors">Termos de Serviço</Link></li>
+              <li><Link to="/privacidade" className="text-white hover:text-white transition-colors">Privacidade</Link></li>
             </ul>
           </div>
         </div>

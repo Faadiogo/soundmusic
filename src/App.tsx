@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -16,6 +17,12 @@ import ProfilePage from './pages/profile/ProfilePage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import NotFoundPage from './pages/NotFoundPage';
 
+// Legal Pages
+import FAQPage from './pages/legal/FAQPage';
+import TermsPage from './pages/legal/TermsPage';
+import PrivacyPage from './pages/legal/PrivacyPage';
+import HelpPage from './pages/legal/HelpPage';
+
 function App() {
   return (
     <BrowserRouter>
@@ -25,6 +32,12 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          
+          {/* Legal pages */}
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/termos" element={<TermsPage />} />
+          <Route path="/privacidade" element={<PrivacyPage />} />
+          <Route path="/ajuda" element={<HelpPage />} />
           
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
