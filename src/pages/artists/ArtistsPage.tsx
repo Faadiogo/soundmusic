@@ -1,146 +1,63 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Plus, Pencil, Trash2, Search, Music, Instagram, Youtube, ExternalLink, AlertCircle, RefreshCw } from 'lucide-react';
+import Layout from '../../components/layout/Layout';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMockData } from '../../contexts/MockDataContext';
-import { FaSpotify, FaTiktok } from "react-icons/fa";
-import { spotifyService } from '../../services/spotifyService';
-import SpotifyConfig from '../../components/SpotifyConfig';
+import { Artist } from '../../types/schema';
 
-// Types
-interface Artist {
-  id: string;
-  name: string;
-  artisticName: string;
-  soundOnEmail: string | null;
-  onerpmEmail: string | null;
-  spotifyLink: string | null;
-  youtubeLink: string | null;
-  tiktokLink: string | null;
-  instagramLink: string | null;
-  spotifyImage?: string | null;
-}
+// Mock data
+const mockArtists: Artist[] = [
+  {
+    id: '1',
+    name: 'João Silva',
+    email: 'joao@example.com',
+    phone: '(11) 99999-9999',
+    stagename: 'J.Silva',
+    artisticgenres: ['Pop', 'Rock'],
+    spotifyurl: 'https://open.spotify.com/artist/123',
+    instagramurl: 'https://instagram.com/jsilva',
+    youtubeurl: 'https://youtube.com/jsilva',
+    userid: 'user1'
+  },
+  {
+    id: '2',
+    name: 'Maria Oliveira',
+    email: 'maria@example.com',
+    phone: '(21) 98888-8888',
+    stagename: 'M.Oliveira',
+    artisticgenres: ['MPB', 'Samba'],
+    spotifyurl: 'https://open.spotify.com/artist/456',
+    instagramurl: 'https://instagram.com/moliveira',
+    youtubeurl: 'https://youtube.com/moliveira',
+    userid: 'user2'
+  },
+  {
+    id: '3',
+    name: 'Carlos Pereira',
+    email: 'carlos@example.com',
+    phone: '(31) 97777-7777',
+    stagename: 'C.Pereira',
+    artisticgenres: ['Hip Hop', 'Rap'],
+    spotifyurl: 'https://open.spotify.com/artist/789',
+    instagramurl: 'https://instagram.com/cpereira',
+    youtubeurl: 'https://youtube.com/cpereira',
+    userid: 'user3'
+  },
+];
 
 const ArtistsPage = () => {
   const { supabase } = useAuth();
   const { useMockData: shouldUseMockData } = useMockData();
   const [artists, setArtists] = useState<Artist[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [artistToDelete, setArtistToDelete] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [songsCount, setSongsCount] = useState<{[key: string]: number}>({});
-  const [loadingImages, setLoadingImages] = useState<{[key: string]: boolean}>({});
-  const [showSpotifyConfig, setShowSpotifyConfig] = useState(!spotifyService.hasCredentials());
-
-  // Mock data
-  const mockArtists: Artist[] = [
-    {
-      id: '1',
-      name: 'Beltrano de Souza',
-      artisticName: 'MC Pogba',
-      soundOnEmail: 'pogba@soundon.com',
-      onerpmEmail: 'pogba@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/mcpogba',
-      youtubeLink: 'https://youtube.com/mcpogba',
-      tiktokLink: 'https://tiktok.com/@mcpogba',
-      instagramLink: 'https://instagram.com/mcpogba'
-    },
-    {
-      id: '2',
-      name: 'Fulano de Tal',
-      artisticName: 'MC D\'Lara',
-      soundOnEmail: 'dlara@soundon.com',
-      onerpmEmail: 'dlara@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/mcdlara',
-      youtubeLink: 'https://youtube.com/mcdlara',
-      tiktokLink: 'https://tiktok.com/@mcdlara',
-      instagramLink: 'https://instagram.com/mcdlara'
-    },
-    {
-      id: '3',
-      name: 'Ciclano de Tal',
-      artisticName: 'DJ Tchouzen',
-      soundOnEmail: 'tchouzen@soundon.com',
-      onerpmEmail: null,
-      spotifyLink: 'https://spotify.com/artist/djtchouzen',
-      youtubeLink: 'https://youtube.com/djtchouzen',
-      tiktokLink: null,
-      instagramLink: 'https://instagram.com/djtchouzen'
-    },
-    {
-      id: '4',
-      name: 'Beltrano de Tal',
-      artisticName: 'DJ Vitinho',
-      soundOnEmail: 'vitinho@soundon.com',
-      onerpmEmail: 'vitinho@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/djvitinho',
-      youtubeLink: null,
-      tiktokLink: 'https://tiktok.com/@djvitinho',
-      instagramLink: 'https://instagram.com/djvitinho'
-    },
-    {
-      id: '5',
-      name: 'Rodrigo Martins',
-      artisticName: 'DJ RM',
-      soundOnEmail: 'rm@soundon.com',
-      onerpmEmail: 'rm@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/djrm',
-      youtubeLink: 'https://youtube.com/djrm',
-      tiktokLink: null,
-      instagramLink: 'https://instagram.com/djrm'
-    },
-    {
-      id: '6',
-      name: 'Leonardo Silva',
-      artisticName: 'DJ Leo Beat',
-      soundOnEmail: null,
-      onerpmEmail: 'leobeat@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/djleobeat',
-      youtubeLink: 'https://youtube.com/djleobeat',
-      tiktokLink: 'https://tiktok.com/@djleobeat',
-      instagramLink: 'https://instagram.com/djleobeat'
-    },
-    {
-      id: '7',
-      name: 'Diego Costa',
-      artisticName: 'DJ Diego DC',
-      soundOnEmail: 'diegodc@soundon.com',
-      onerpmEmail: null,
-      spotifyLink: 'https://spotify.com/artist/djdiegodc',
-      youtubeLink: null,
-      tiktokLink: 'https://tiktok.com/@djdiegodc',
-      instagramLink: 'https://instagram.com/djdiegodc'
-    },
-    {
-      id: '8',
-      name: 'Bruno Henrique',
-      artisticName: 'MC Beiço MR',
-      soundOnEmail: 'beicomr@soundon.com',
-      onerpmEmail: 'beicomr@onerpm.com',
-      spotifyLink: 'https://spotify.com/artist/mcbeicomr',
-      youtubeLink: 'https://youtube.com/mcbeicomr',
-      tiktokLink: 'https://tiktok.com/@mcbeicomr',
-      instagramLink: 'https://instagram.com/mcbeicomr'
-    }
-  ];
-
-  const mockSongCounts = {
-    '1': 10, 
-    '2': 7,
-    '3': 6,
-    '4': 8,
-    '5': 4,
-    '6': 5,
-    '7': 3,
-    '8': 9    
-  };
 
   useEffect(() => {
     if (shouldUseMockData) {
       setArtists(mockArtists);
-      setSongsCount(mockSongCounts);
       setLoading(false);
     } else {
       fetchArtists();
@@ -154,356 +71,229 @@ const ArtistsPage = () => {
         .from('artists')
         .select('*')
         .order('name');
-        
-      if (error) throw error;
-      
-      if (data) {
-        setArtists(data);
-        // Fetch song counts for each artist
-        const counts: {[key: string]: number} = {};
-        for (const artist of data) {
-          const { count, error: countError } = await supabase
-            .from('song_collaborators')
-            .select('*', { count: 'exact', head: true })
-            .eq('artistId', artist.id);
-            
-          if (!countError) {
-            counts[artist.id] = count || 0;
-          }
-        }
-        setSongsCount(counts);
 
-        // Load Spotify images if credentials are configured
-        if (spotifyService.hasCredentials()) {
-          loadSpotifyImages(data);
-        }
-      }
+      if (error) throw error;
+      setArtists(data || []);
     } catch (error) {
       console.error('Error fetching artists:', error);
+      setArtists([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadSpotifyImages = async (artistsList: Artist[]) => {
-    for (const artist of artistsList) {
-      if (!artist.spotifyImage) {
-        setLoadingImages(prev => ({ ...prev, [artist.id]: true }));
-        
-        try {
-          const imageUrl = await spotifyService.getArtistImage(artist.artisticName);
-          if (imageUrl) {
-            setArtists(prev => prev.map(a => 
-              a.id === artist.id ? { ...a, spotifyImage: imageUrl } : a
-            ));
-          }
-        } catch (error) {
-          console.error(`Error loading image for ${artist.artisticName}:`, error);
-        } finally {
-          setLoadingImages(prev => ({ ...prev, [artist.id]: false }));
-        }
-      }
-    }
-  };
-
-  const refreshArtistImage = async (artist: Artist) => {
-    if (!spotifyService.hasCredentials()) return;
-    
-    setLoadingImages(prev => ({ ...prev, [artist.id]: true }));
-    
-    try {
-      const imageUrl = await spotifyService.getArtistImage(artist.artisticName);
-      setArtists(prev => prev.map(a => 
-        a.id === artist.id ? { ...a, spotifyImage: imageUrl } : a
-      ));
-    } catch (error) {
-      console.error(`Error refreshing image for ${artist.artisticName}:`, error);
-    } finally {
-      setLoadingImages(prev => ({ ...prev, [artist.id]: false }));
-    }
-  };
-
-  const handleSpotifyConfigured = () => {
-    setShowSpotifyConfig(false);
-    loadSpotifyImages(artists);
-  };
-
-  const handleDeleteClick = (artistId: string) => {
+  const handleDelete = (artistId: string) => {
     setArtistToDelete(artistId);
     setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
     if (!artistToDelete) return;
-    
+
     try {
-      setDeleteError(null);
-      
-      // Check if artist has songs
-      const { count, error: countError } = await supabase
-        .from('song_collaborators')
-        .select('*', { count: 'exact', head: true })
-        .eq('artistId', artistToDelete);
-        
-      if (countError) throw countError;
-      
-      if (count && count > 0) {
-        setDeleteError(`Cannot delete artist because they are associated with ${count} songs. Remove the artist from all songs first.`);
-        return;
-      }
-      
-      // Delete the artist
+      setLoading(true);
       const { error } = await supabase
         .from('artists')
         .delete()
         .eq('id', artistToDelete);
-        
+
       if (error) throw error;
       
-      // Update the UI
-      setArtists(artists.filter(artist => artist.id !== artistToDelete));
+      fetchArtists();
       setShowDeleteModal(false);
+      setArtistToDelete(null);
     } catch (error) {
       console.error('Error deleting artist:', error);
-      setDeleteError('An error occurred while deleting the artist.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const filteredArtists = artists.filter(artist => 
-    artist.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    artist.artisticName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredArtists = artists.filter(artist =>
+    artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    artist.stagename?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const displayArtists = filteredArtists;
-  
   return (
-    <div className="page-container">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <Users className="mr-2 h-8 w-8 text-primary-600" />
-            Parceiros
-          </h1>
-          <p className="text-gray-600 mt-1">Cadastre artístas parceiros</p>
-        </div>
-        <Link to="/artists/new" className="btn-primary mt-4 sm:mt-0 flex items-center">
-          <Plus className="w-4 h-4 mr-2" />
-          Cadastrar novo artista
-        </Link>
-      </div>
-
-      {/* Spotify Configuration - only show when not using mock data */}
-      {showSpotifyConfig && !shouldUseMockData && (
-        <div className="mb-6">
-          <SpotifyConfig onConfigured={handleSpotifyConfigured} />
-        </div>
-      )}
-
-      {/* Search */}
-      <div className="mb-6">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+    <Layout>
+      <div className="page-container">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+          <div className="flex items-center mb-4 sm:mb-0">
+            <Users className="h-8 w-8 text-primary-600 mr-3" />
+            <h1 className="section-title mb-0">Parceiros Musicais</h1>
           </div>
-          <input
-            type="text"
-            placeholder="Buscar artistas..."
-            className="input pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <Link 
+            to="/artists/new" 
+            className="btn-primary flex items-center"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Novo Parceiro
+          </Link>
         </div>
-      </div>
 
-      {/* Artists grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayArtists.map((artist) => (
-          <div key={artist.id} className="card overflow-hidden">
-            {/* Artist Image */}
-            {(artist.spotifyImage || loadingImages[artist.id]) && (
-              <div className="relative h-48 bg-gray-200">
-                {loadingImages[artist.id] ? (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <RefreshCw className="h-8 w-8 text-gray-400 animate-spin" />
-                  </div>
-                ) : artist.spotifyImage ? (
-                  <>
-                    <img 
-                      src={artist.spotifyImage} 
-                      alt={artist.artisticName}
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      onClick={() => refreshArtistImage(artist)}
-                      className="absolute top-2 right-2 p-1 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70"
-                      title="Atualizar imagem"
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                    </button>
-                  </>
-                ) : null}
-              </div>
+        {/* Search */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <input
+              type="text"
+              placeholder="Buscar por nome ou nome artístico..."
+              className="input pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Artists Grid */}
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <RefreshCw className="h-8 w-8 animate-spin text-primary-600" />
+          </div>
+        ) : filteredArtists.length === 0 ? (
+          <div className="text-center py-12">
+            <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-medium text-gray-500 mb-2">
+              {searchTerm ? 'Nenhum parceiro encontrado' : 'Nenhum parceiro cadastrado'}
+            </h3>
+            <p className="text-gray-400 mb-6">
+              {searchTerm ? 'Tente buscar com outros termos' : 'Comece adicionando seu primeiro parceiro musical'}
+            </p>
+            {!searchTerm && (
+              <Link to="/artists/new" className="btn-primary">
+                <Plus className="h-5 w-5 mr-2" />
+                Adicionar Primeiro Parceiro
+              </Link>
             )}
-            
-            <div className="p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">{artist.artisticName}</h3>
-                  <p className="text-gray-600">{artist.name}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredArtists.map((artist) => (
+              <div key={artist.id} className="card p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      {artist.name}
+                    </h3>
+                    {artist.stagename && (
+                      <p className="text-primary-600 font-medium mb-2">
+                        {artist.stagename}
+                      </p>
+                    )}
+                    <p className="text-gray-600 text-sm">{artist.email}</p>
+                    {artist.phone && (
+                      <p className="text-gray-600 text-sm">{artist.phone}</p>
+                    )}
+                  </div>
+                  <div className="flex space-x-2">
+                    <Link
+                      to={`/artists/${artist.id}`}
+                      className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
+                      title="Editar"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(artist.id)}
+                      className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                      title="Excluir"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
+
+                {/* Genres */}
+                {artist.artisticgenres && artist.artisticgenres.length > 0 && (
+                  <div className="mb-4">
+                    <div className="flex flex-wrap gap-1">
+                      {artist.artisticgenres.map((genre, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+                        >
+                          <Music className="h-3 w-3 mr-1" />
+                          {genre}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Social Links */}
                 <div className="flex space-x-2">
-                  <Link 
-                    to={`/artists/${artist.id}`} 
-                    className="p-2 text-gray-400 hover:text-primary-600 hover:bg-gray-100 rounded-full"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Link>
-                  <button 
-                    onClick={() => handleDeleteClick(artist.id)}
-                    className="p-2 text-gray-400 hover:text-error-600 hover:bg-gray-100 rounded-full"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center text-gray-600 mt-4">
-                <Music className="h-4 w-4 mr-1" />
-                <span className="text-sm">
-                  Participação em {songsCount[artist.id] || 0} músicas
-                </span>
-              </div>
-
-              {/* Load Spotify image button - only show when not using mock data */}
-              {!artist.spotifyImage && !loadingImages[artist.id] && spotifyService.hasCredentials() && !shouldUseMockData && (
-                <button
-                  onClick={() => refreshArtistImage(artist)}
-                  className="mt-3 text-sm text-primary-600 hover:text-primary-700 flex items-center"
-                >
-                  <FaSpotify className="h-4 w-4 mr-1" />
-                  Carregar imagem do Spotify
-                </button>
-              )}
-
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="flex flex-wrap gap-2">
-                  {artist.spotifyLink && (
-                    <a 
-                      href={artist.spotifyLink} 
-                      target="_blank" 
+                  {artist.instagramurl && (
+                    <a
+                      href={artist.instagramurl}
+                      target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-[#1DB954] text-white rounded-full hover:bg-opacity-90"
-                      title="Spotify"
-                    >
-                      <FaSpotify />
-                    </a>
-                  )}
-                  {artist.youtubeLink && (
-                    <a 
-                      href={artist.youtubeLink} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-2 bg-[#FF0000] text-white rounded-full hover:bg-opacity-90"
-                      title="YouTube"
-                    >
-                      <Youtube className="h-4 w-4" />
-                    </a>
-                  )}
-                  {artist.instagramLink && (
-                    <a 
-                      href={artist.instagramLink} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-2 bg-[#E1306C] text-white rounded-full hover:bg-opacity-90"
+                      className="p-2 text-gray-400 hover:text-pink-600 transition-colors"
                       title="Instagram"
                     >
                       <Instagram className="h-4 w-4" />
                     </a>
                   )}
-                  {artist.tiktokLink && (
-                    <a 
-                      href={artist.tiktokLink} 
-                      target="_blank" 
+                  {artist.youtubeurl && (
+                    <a
+                      href={artist.youtubeurl}
+                      target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-[#000000] text-white rounded-full hover:bg-opacity-90"
-                      title="TikTok"
+                      className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                      title="YouTube"
                     >
-                      <FaTiktok />
+                      <Youtube className="h-4 w-4" />
+                    </a>
+                  )}
+                  {artist.spotifyurl && (
+                    <a
+                      href={artist.spotifyurl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 text-gray-400 hover:text-green-600 transition-colors"
+                      title="Spotify"
+                    >
+                      <ExternalLink className="h-4 w-4" />
                     </a>
                   )}
                 </div>
               </div>
-            </div>
-            <div className="bg-gray-50 px-6 py-3 border-t border-gray-100">
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-500">
-                  {artist.soundOnEmail && <div>SoundOn: {artist.soundOnEmail}</div>}
-                  {artist.onerpmEmail && <div>OneRPM: {artist.onerpmEmail}</div>}
-                </div>
-                <Link 
-                  to={`/artists/${artist.id}`} 
-                  className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center"
-                >
-                  Detalhes <ExternalLink className="ml-1 h-3 w-3" />
-                </Link>
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        )}
 
-      {/* Delete Modal */}
-      {showDeleteModal && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-error-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <AlertCircle className="h-6 w-6 text-error-600" />
-                  </div>
-                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">Excluir Artísta</h3>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Tem certeza que deseja excluir este artista? Esta ação não pode ser desfeita.
-                      </p>
-                      {deleteError && (
-                        <div className="mt-2 p-2 text-sm text-error-800 bg-error-50 rounded-md">
-                          {deleteError}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <div className="flex items-center mb-4">
+                <AlertCircle className="h-6 w-6 text-red-600 mr-3" />
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Confirmar Exclusão
+                </h3>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <p className="text-gray-600 mb-6">
+                Tem certeza que deseja excluir este parceiro? Esta ação não pode ser desfeita.
+              </p>
+              <div className="flex justify-end space-x-3">
                 <button
-                  type="button"
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-error-600 text-base font-medium text-white hover:bg-error-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-error-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={confirmDelete}
-                >
-                  Excluir
-                </button>
-                <button
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => setShowDeleteModal(false)}
+                  className="btn-outline"
                 >
                   Cancelar
                 </button>
+                <button
+                  onClick={confirmDelete}
+                  className="btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500"
+                >
+                  Excluir
+                </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </Layout>
   );
 };
 
