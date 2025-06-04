@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Plus, Pencil, Trash2, Search, Music, Instagram, Youtube, ExternalLink, AlertCircle, RefreshCw } from 'lucide-react';
@@ -25,7 +26,6 @@ const ArtistsPage = () => {
   const { supabase } = useAuth();
   const { useMockData: shouldUseMockData } = useMockData();
   const [artists, setArtists] = useState<Artist[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [artistToDelete, setArtistToDelete] = useState<string | null>(null);
