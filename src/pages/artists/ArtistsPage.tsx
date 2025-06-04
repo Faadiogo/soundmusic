@@ -4,7 +4,20 @@ import { Users, Plus, Pencil, Trash2, Search, Music, Instagram, Youtube, Externa
 import Layout from '../../components/layout/Layout';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMockData } from '../../contexts/MockDataContext';
-import { Artist } from '../../types/schema';
+
+// Define Artist type locally since it's not exported from schema
+interface Artist {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  stagename?: string;
+  artisticgenres?: string[];
+  spotifyurl?: string;
+  instagramurl?: string;
+  youtubeurl?: string;
+  userid: string;
+}
 
 // Mock data
 const mockArtists: Artist[] = [
@@ -208,7 +221,7 @@ const ArtistsPage = () => {
                 {artist.artisticgenres && artist.artisticgenres.length > 0 && (
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-1">
-                      {artist.artisticgenres.map((genre, index) => (
+                      {artist.artisticgenres.map((genre: string, index: number) => (
                         <span
                           key={index}
                           className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
