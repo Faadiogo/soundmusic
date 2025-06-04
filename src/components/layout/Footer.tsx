@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Facebook, Instagram } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 
 const Footer: React.FC = () => {

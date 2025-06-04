@@ -1,12 +1,9 @@
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Bell, Save, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useMockData } from '../../contexts/MockDataContext';
 
 const NotificationsConfigPage = () => {
   const { supabase } = useAuth();
-  const { useMockData: shouldUseMockData } = useMockData();
   const [config, setConfig] = useState({
     newArtistNotification: true,
     newSongNotification: true,
@@ -21,18 +18,6 @@ const NotificationsConfigPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (shouldUseMockData) {
-      // Simulate save for mock data
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
-      }, 1000);
-      return;
-    }
-
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -76,12 +61,6 @@ const NotificationsConfigPage = () => {
       {success && (
         <div className="mb-6 p-4 rounded-md bg-success-50 text-success-800">
           Configurações salvas com sucesso!
-        </div>
-      )}
-
-      {shouldUseMockData && (
-        <div className="mb-6 p-4 rounded-md bg-blue-50 text-blue-800">
-          Modo de dados de exemplo ativo - as configurações não serão salvas no banco de dados.
         </div>
       )}
 
