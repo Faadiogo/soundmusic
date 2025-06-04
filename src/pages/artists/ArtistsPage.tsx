@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Plus, Pencil, Trash2, Search, Music, Instagram, Youtube, AlignJustify as Spotify, ExternalLink, AlertCircle } from 'lucide-react';
+import { Users, Plus, Pencil, Trash2, Search, Music, Instagram, Youtube, ExternalLink, AlertCircle, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { FaSpotify, FaTiktok } from "react-icons/fa";
+import { spotifyService } from '../../services/spotifyService';
+import SpotifyConfig from '../../components/SpotifyConfig';
 
 // Types
 interface Artist {
@@ -15,6 +17,7 @@ interface Artist {
   youtubeLink: string | null;
   tiktokLink: string | null;
   instagramLink: string | null;
+  spotifyImage?: string | null;
 }
 
 const ArtistsPage = () => {
@@ -26,6 +29,8 @@ const ArtistsPage = () => {
   const [artistToDelete, setArtistToDelete] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [songsCount, setSongsCount] = useState<{[key: string]: number}>({});
+  const [loadingImages, setLoadingImages] = useState<{[key: string]: boolean}>({});
+  const [showSpotifyConfig, setShowSpotifyConfig] = useState(!spotifyService.hasCredentials());
 
   useEffect(() => {
     fetchArtists();
@@ -56,12 +61,60 @@ const ArtistsPage = () => {
           }
         }
         setSongsCount(counts);
+
+        // Load Spotify images if credentials are configured
+        if (spotifyService.hasCredentials()) {
+          loadSpotifyImages(data);
+        }
       }
     } catch (error) {
       console.error('Error fetching artists:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadSpotifyImages = async (artistsList: Artist[]) => {
+    for (const artist of artistsList) {
+      if (!artist.spotifyImage) {
+        setLoadingImages(prev => ({ ...prev, [artist.id]: true }));
+        
+        try {
+          const imageUrl = await spotifyService.getArtistImage(artist.artisticName);
+          if (imageUrl) {
+            setArtists(prev => prev.map(a => 
+              a.id === artist.id ? { ...a, spotifyImage: imageUrl } : a
+            ));
+          }
+        } catch (error) {
+          console.error(`Error loading image for ${artist.artisticName}:`, error);
+        } finally {
+          setLoadingImages(prev => ({ ...prev, [artist.id]: false }));
+        }
+      }
+    }
+  };
+
+  const refreshArtistImage = async (artist: Artist) => {
+    if (!spotifyService.hasCredentials()) return;
+    
+    setLoadingImages(prev => ({ ...prev, [artist.id]: true }));
+    
+    try {
+      const imageUrl = await spotifyService.getArtistImage(artist.artisticName);
+      setArtists(prev => prev.map(a => 
+        a.id === artist.id ? { ...a, spotifyImage: imageUrl } : a
+      ));
+    } catch (error) {
+      console.error(`Error refreshing image for ${artist.artisticName}:`, error);
+    } finally {
+      setLoadingImages(prev => ({ ...prev, [artist.id]: false }));
+    }
+  };
+
+  const handleSpotifyConfigured = () => {
+    setShowSpotifyConfig(false);
+    loadSpotifyImages(artists);
   };
 
   const handleDeleteClick = (artistId: string) => {
@@ -202,7 +255,6 @@ const ArtistsPage = () => {
     }
   ];
 
-
   const displayArtists = loading || artists.length === 0 ? mockArtists : filteredArtists;
   const mockSongCounts = {
     '1': 10, 
@@ -214,7 +266,6 @@ const ArtistsPage = () => {
     '7': 3,
     '8': 9    
   };
-  
   
   return (
     <div className="page-container">
@@ -231,6 +282,13 @@ const ArtistsPage = () => {
           Cadastrar novo artista
         </Link>
       </div>
+
+      {/* Spotify Configuration */}
+      {showSpotifyConfig && (
+        <div className="mb-6">
+          <SpotifyConfig onConfigured={handleSpotifyConfigured} />
+        </div>
+      )}
 
       {/* Search */}
       <div className="mb-6">
@@ -252,6 +310,32 @@ const ArtistsPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayArtists.map((artist) => (
           <div key={artist.id} className="card overflow-hidden">
+            {/* Artist Image */}
+            {(artist.spotifyImage || loadingImages[artist.id]) && (
+              <div className="relative h-48 bg-gray-200">
+                {loadingImages[artist.id] ? (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <RefreshCw className="h-8 w-8 text-gray-400 animate-spin" />
+                  </div>
+                ) : artist.spotifyImage ? (
+                  <>
+                    <img 
+                      src={artist.spotifyImage} 
+                      alt={artist.artisticName}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => refreshArtistImage(artist)}
+                      className="absolute top-2 right-2 p-1 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70"
+                      title="Atualizar imagem"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </button>
+                  </>
+                ) : null}
+              </div>
+            )}
+            
             <div className="p-6">
               <div className="flex justify-between items-start">
                 <div>
@@ -280,6 +364,17 @@ const ArtistsPage = () => {
                   Participação em {songsCount[artist.id] !== undefined ? songsCount[artist.id] : mockSongCounts[artist.id as keyof typeof mockSongCounts] || 0} músicas
                 </span>
               </div>
+
+              {/* Load Spotify image button */}
+              {!artist.spotifyImage && !loadingImages[artist.id] && spotifyService.hasCredentials() && (
+                <button
+                  onClick={() => refreshArtistImage(artist)}
+                  className="mt-3 text-sm text-primary-600 hover:text-primary-700 flex items-center"
+                >
+                  <FaSpotify className="h-4 w-4 mr-1" />
+                  Carregar imagem do Spotify
+                </button>
+              )}
 
               <div className="mt-4 pt-4 border-t border-gray-100">
                 <div className="flex flex-wrap gap-2">
@@ -348,7 +443,6 @@ const ArtistsPage = () => {
         ))}
       </div>
 
-      {/* Delete confirmation modal */}
       {showDeleteModal && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
