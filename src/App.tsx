@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AdminRoute } from './components/AdminRoute';
+import { SuperAdminRoute } from './components/SuperAdminRoute';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -15,6 +16,8 @@ import SongsPage from './pages/songs/SongsPage';
 import SongFormPage from './pages/songs/SongFormPage';
 import ProfilePage from './pages/profile/ProfilePage';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import UsersManagementPage from './pages/admin/UsersManagementPage';
+import SongsStatusPage from './pages/admin/SongsStatusPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Legal Pages
@@ -54,6 +57,12 @@ function App() {
           {/* Admin routes */}
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminDashboard />} />
+          </Route>
+
+          {/* Super Admin routes */}
+          <Route element={<SuperAdminRoute />}>
+            <Route path="/admin/users" element={<UsersManagementPage />} />
+            <Route path="/admin/songs-status" element={<SongsStatusPage />} />
           </Route>
           
           {/* Fallback routes */}

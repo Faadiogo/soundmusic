@@ -1,14 +1,14 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Music, Users, User, Menu, X, LayoutDashboard, Calendar, LogOut } from 'lucide-react';
+import { Music, Users, User, Menu, X, LayoutDashboard, Calendar, LogOut, UserCheck2, PlayCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin, isSuperAdmin } = useAuth();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const logo = "/logo_bco.png";
-
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -23,9 +23,13 @@ const Navbar: React.FC = () => {
     { name: 'Músicas', path: '/songs', icon: <Music size={20} /> },
     { name: 'Parceiros', path: '/artists', icon: <Users size={20} /> },
     { name: 'Perfil', path: '/profile', icon: <User size={20} /> },
-    ...(user.role === 'admin' ? [
+    ...(isAdmin ? [
       { name: 'Admin', path: '/admin', icon: <LayoutDashboard size={20} /> },
       { name: 'Lançamentos', path: '/admin/releases', icon: <Calendar size={20} /> },
+    ] : []),
+    ...(isSuperAdmin ? [
+      { name: 'Usuários', path: '/admin/users', icon: <UserCheck2 size={20} /> },
+      { name: 'Status Músicas', path: '/admin/songs-status', icon: <PlayCircle size={20} /> },
     ] : []),
   ] : [];
 

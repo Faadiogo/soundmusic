@@ -5,6 +5,7 @@ import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 type AuthContextType = {
   user: User | null;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   isLoading: boolean;
   signUp: (email: string, password: string) => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
@@ -23,6 +24,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -48,6 +50,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   async function checkUserRole(userId: string | undefined) {
     if (!userId) {
       setIsAdmin(false);
+      setIsSuperAdmin(false);
       return;
     }
 
@@ -59,10 +62,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .single();
 
       if (error) throw error;
-      setIsAdmin(data?.role === 'admin');
+      const role = data?.role;
+      setIsAdmin(role === 'admin' || role === 'super_admin');
+      setIsSuperAdmin(role === 'super_admin');
     } catch (error) {
       console.error('Error checking user role:', error);
       setIsAdmin(false);
+      setIsSuperAdmin(false);
     } finally {
       setIsLoading(false);
     }
@@ -132,6 +138,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const value = {
     user,
     isAdmin,
+    isSuperAdmin,
     isLoading,
     signUp,
     signIn,

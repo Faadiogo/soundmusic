@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -5,6 +6,16 @@ export type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
+
+export type SongStatus = 
+  | 'submitted'
+  | 'under_review'
+  | 'approved'
+  | 'in_production'
+  | 'mastering'
+  | 'distribution_pending'
+  | 'published'
+  | 'rejected';
 
 export interface Database {
   public: {
@@ -152,6 +163,10 @@ export interface Database {
           distributorRoyalty: number
           streams: number
           revenue: number
+          status: SongStatus
+          status_notes: string | null
+          status_updated_at: string
+          status_updated_by: string | null
         }
         Insert: {
           id?: string
@@ -166,6 +181,10 @@ export interface Database {
           distributorRoyalty: number
           streams?: number
           revenue?: number
+          status?: SongStatus
+          status_notes?: string | null
+          status_updated_at?: string
+          status_updated_by?: string | null
         }
         Update: {
           id?: string
@@ -180,6 +199,10 @@ export interface Database {
           distributorRoyalty?: number
           streams?: number
           revenue?: number
+          status?: SongStatus
+          status_notes?: string | null
+          status_updated_at?: string
+          status_updated_by?: string | null
         }
         Relationships: [
           {

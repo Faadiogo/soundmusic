@@ -1,8 +1,9 @@
+
 import React, { ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Music, Users, Home, User, LogOut, Menu, X, Bell,
-  ChevronDown, BarChart2, Settings, FileText, MessageSquare
+  Music, Users, Home, LogOut, Menu, X, Bell,
+  ChevronDown, BarChart2, Settings, FileText, UserCheck2, PlayCircle
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -11,7 +12,7 @@ type AdminLayoutProps = {
 };
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-  const { user, signOut } = useAuth();
+  const { isSuperAdmin, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,6 +34,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { name: 'Releases', href: '/admin/releases', icon: FileText },
     { name: 'Notifications', href: '/admin/notifications', icon: Bell },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
+    ...(isSuperAdmin ? [
+      { name: 'Gerenciar Usuários', href: '/admin/users', icon: UserCheck2 },
+      { name: 'Status das Músicas', href: '/admin/songs-status', icon: PlayCircle },
+    ] : []),
   ];
 
   return (
@@ -136,7 +141,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                   className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none"
                 >
-                  <span className="mr-1">Admin</span>
+                  <span className="mr-1">{isSuperAdmin ? 'Super Admin' : 'Admin'}</span>
                   <ChevronDown className="h-4 w-4" />
                 </button>
                 {profileDropdownOpen && (
