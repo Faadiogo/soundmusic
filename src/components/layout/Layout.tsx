@@ -1,29 +1,14 @@
-import React, { ReactNode, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { LogOut, Menu, Bell, ChevronDown } from 'lucide-react';
+
+import { ReactNode } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
-
 
 type LayoutProps = {
   children: ReactNode;
 };
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigate('/login');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Users, ArrowLeft, Save, Trash2, Instagram, Youtube, AlignJustify as Spotify, AlertCircle } from 'lucide-react';
+import { Users, ArrowLeft, Save, Trash2, Instagram, Youtube, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import InputMask from 'react-input-mask';
