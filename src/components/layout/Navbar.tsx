@@ -9,6 +9,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const logo = "/logo_bco.png";
+  const icon = "/icon-pto-bco.png";
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -39,6 +40,7 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2">
+              <img src={icon} alt="SOUNDMUSIC Icon" className="h-10 w-auto" />
               <img src={logo} alt="SOUNDMUSIC Logo" className="h-44 w-auto" />
             </Link>
           </div>
