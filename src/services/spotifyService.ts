@@ -1,4 +1,3 @@
-
 interface SpotifyArtist {
   id: string;
   name: string;
@@ -14,6 +13,7 @@ interface SpotifyArtist {
   external_urls: {
     spotify: string;
   };
+  popularity: number;
 }
 
 interface SpotifySearchResponse {
@@ -29,16 +29,14 @@ class SpotifyService {
   private tokenExpiry: number = 0;
 
   constructor() {
-    // These will need to be set by the user
-    this.clientId = localStorage.getItem('spotify_client_id') || '';
-    this.clientSecret = localStorage.getItem('spotify_client_secret') || '';
+    this.clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID || '';
+    this.clientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET || '';
   }
 
   setCredentials(clientId: string, clientSecret: string) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
-    localStorage.setItem('spotify_client_id', clientId);
-    localStorage.setItem('spotify_client_secret', clientSecret);
+    // Não salva mais no localStorage
   }
 
   private async getAccessToken(): Promise<string> {
@@ -95,6 +93,10 @@ class SpotifyService {
     }
   }
 
+  async getArtistData(artistName: string): Promise<SpotifyArtist | null> {
+    return await this.searchArtist(artistName);
+  }
+
   async getArtistImage(artistName: string): Promise<string | null> {
     const artist = await this.searchArtist(artistName);
     if (artist && artist.images.length > 0) {
@@ -102,6 +104,24 @@ class SpotifyService {
       return artist.images[artist.images.length - 1].url;
     }
     return null;
+  }
+
+  async getArtistLargeImage(artistName: string): Promise<string | null> {
+    const artist = await this.searchArtist(artistName);
+    if (artist && artist.images.length > 0) {
+      // Retorna a maior imagem (primeira do array)
+      return artist.images[0].url;
+    }
+    return null;
+  }
+
+  async getArtistById(spotifyId: string): Promise<SpotifyArtist | null> {
+    const token = await this.getAccessToken();
+    const response = await fetch(`https://api.spotify.com/v1/artists/${spotifyId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) return null;
+    return await response.json();
   }
 
   hasCredentials(): boolean {

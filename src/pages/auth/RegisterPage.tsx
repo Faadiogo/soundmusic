@@ -135,11 +135,11 @@ const RegisterPage = () => {
               />
               <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
                 Eu concordo com os{' '}
-                <a href="#" className="font-medium text-yellowfrom-yellow-500 hover:text-yellow-600">
+                <a href="/termos" target="_blank" className="font-medium text-yellowfrom-yellow-500 hover:text-yellow-600">
                   Termos de Serviço
                 </a>{' '}
                 e com a{' '}
-                <a href="#" className="font-medium text-yellowfrom-yellow-500 hover:text-yellow-600">
+                <a href="/privacidade" target="_blank" className="font-medium text-yellowfrom-yellow-500 hover:text-yellow-600">
                   Política de Privacidade
                 </a>
               </label>

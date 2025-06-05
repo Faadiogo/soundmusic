@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Music, Plus, Search, Calendar, Clock, Pencil, 
@@ -133,102 +133,16 @@ const SongsPage = () => {
     song.genre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Mock data for development
-  const mockSongs: SongWithCollaborators[] = [
-    {
-      id: '1',
-      title: 'Cada Vez Mais Gostosa',
-      genre: 'Funk',
-      releasedate: '2025-01-15',
-      duration: 180,
-      streams: 210000,
-      revenue: 4200,
-      collaborators: ['MC POGBA', 'DJ RM']
-    },
-    {
-      id: '2',
-      title: 'Rabetão de Terremoto',
-      genre: 'Funk',
-      releasedate: '2025-02-10',
-      duration: 200,
-      streams: 195000,
-      revenue: 3900,
-      collaborators: ['MC D\'LARA', 'DJ TCHOUZEN']
-    },
-    {
-      id: '3',
-      title: 'Treme Tudo no Baile',
-      genre: 'Funk',
-      releasedate: '2025-03-05',
-      duration: 215,
-      streams: 175000,
-      revenue: 3600,
-      collaborators: ['DJ VITINHO', 'MC POGBA']
-    },
-    {
-      id: '4',
-      title: 'Desce com Pressão',
-      genre: 'Funk',
-      releasedate: '2025-03-22',
-      duration: 190,
-      streams: 160000,
-      revenue: 3200,
-      collaborators: ['DJ DIEGO DC', 'MC D\'LARA']
-    },
-    {
-      id: '5',
-      title: 'Vai no Movimento',
-      genre: 'Funk',
-      releasedate: '2025-04-01',
-      duration: 205,
-      streams: 150000,
-      revenue: 3000,
-      collaborators: ['DJ LEO BEAT']
-    },
-    {
-      id: '6',
-      title: 'Bumbum Selvagem',
-      genre: 'Funk',
-      releasedate: '2025-04-15',
-      duration: 195,
-      streams: 145000,
-      revenue: 2900,
-      collaborators: ['MC BEIÇO MR', 'DJ RM']
-    },
-    {
-      id: '7',
-      title: 'Noite do Pancadão',
-      genre: 'Funk',
-      releasedate: '2025-04-27',
-      duration: 210,
-      streams: 130000,
-      revenue: 2600,
-      collaborators: ['MC POGBA', 'DJ LEO BEAT']
-    },
-    {
-      id: '8',
-      title: 'Explosão do Baile',
-      genre: 'Funk',
-      releasedate: '2025-05-01',
-      duration: 220,
-      streams: 125000,
-      revenue: 2500,
-      collaborators: ['MC D\'LARA', 'DJ TCHOUZEN']
-    }
-  ];
-  
-  
-  const displaySongs = loading || songs.length === 0 ? mockSongs : filteredSongs;
+  const displaySongs = filteredSongs;
   
   return (
     <div className="page-container">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <Music className="mr-2 h-8 w-8 text-primary-600" />
+            <Music className="mr-2 h-8 w-8 text-yellow-500" />
             Músicas
           </h1>
-          <p className="text-gray-600 mt-1">Gerencie seu catálogo musical</p>
         </div>
         <Link to="/songs/new" className="btn-primary mt-4 sm:mt-0 flex items-center">
           <Plus className="w-4 h-4 mr-2" />
@@ -326,7 +240,7 @@ const SongsPage = () => {
               {displaySongs.map((song) => (
                 <tr key={song.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Link to={`/songs/${song.id}`} className="text-primary-600 hover:text-primary-700 font-medium">
+                    <Link to={`/songs/${song.id}`} className="text-yellow-500 hover:text-yellow-600 font-medium">
                       {song.title}
                     </Link>
                   </td>
@@ -340,7 +254,7 @@ const SongsPage = () => {
                       {song.collaborators.map((collaborator, index) => (
                         <span 
                           key={index}
-                          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+                          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700"
                         >
                           {collaborator}
                         </span>
@@ -349,13 +263,13 @@ const SongsPage = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <Calendar className="mr-1 h-4 w-4 text-gray-400" />
+                      <Calendar className="mr-1 h-4 w-4 text-yellow-500" />
                       {format(new Date(song.releasedate), 'dd/MM/yyyy')}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <Clock className="mr-1 h-4 w-4 text-gray-400" />
+                      <Clock className="mr-1 h-4 w-4 text-yellow-500" />
                       {formatDuration(song.duration)}
                     </div>
                   </td>

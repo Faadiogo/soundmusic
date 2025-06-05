@@ -152,11 +152,11 @@ const LoginPage = () => {
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 sm:px-10">
           <p className="text-xs text-center text-gray-500">
             Ao entrar, você concorda com nossos{' '}
-            <a href="#" className="font-medium text-yellow-500 hover:text-primary-500">
+            <a href="/termos" target="_blank" className="font-medium text-yellow-500 hover:text-primary-500">
               Termos de Serviço
             </a>{' '}
             e nossa{' '}
-            <a href="#" className="font-medium text-yellow-500 hover:text-primary-500">
+            <a href="/privacidade" target="_blank" className="font-medium text-yellow-500 hover:text-primary-500">
               Política de Privacidade
             </a>
           </p>

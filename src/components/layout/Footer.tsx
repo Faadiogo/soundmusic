@@ -29,12 +29,11 @@ const Footer: React.FC = () => {
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-medium mb-4">Links</h3>
+            <h3 className="text-lg font-medium mb-4">Institucional</h3>
             <ul className="space-y-2">
               <li><a href="#" className="text-white hover:text-white transition-colors">Sobre nós</a></li>
-              <li><a href="#" className="text-white hover:text-white transition-colors">Serviços</a></li>
-              <li><a href="#" className="text-white hover:text-white transition-colors">Blog</a></li>
-              <li><a href="#" className="text-white hover:text-white transition-colors">Contato</a></li>
+              <li><Link to="/termos" className="text-white hover:text-white transition-colors">Termos de Serviço</Link></li>
+              <li><Link to="/privacidade" className="text-white hover:text-white transition-colors">Política de Privacidade</Link></li>              
             </ul>
           </div>
           <div>
@@ -42,8 +41,8 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li><Link to="/faq" className="text-white hover:text-white transition-colors">FAQ</Link></li>
               <li><Link to="/ajuda" className="text-white hover:text-white transition-colors">Ajuda</Link></li>
-              <li><Link to="/termos" className="text-white hover:text-white transition-colors">Termos de Serviço</Link></li>
-              <li><Link to="/privacidade" className="text-white hover:text-white transition-colors">Privacidade</Link></li>
+              <li><a href="#" className="text-white hover:text-white transition-colors">Contato</a></li>
+
             </ul>
           </div>
         </div>
